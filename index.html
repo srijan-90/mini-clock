@@ -25,8 +25,9 @@ main{flex:1;display:flex;align-items:center;justify-content:center;flex-directio
 
 /* Keep the clock face clean until the first interaction. */
 body:not(.ui-revealed) header{height:0;padding-top:0;padding-bottom:0;border-color:transparent;overflow:hidden}
+body:not(.ui-revealed) header>*,body:not(.ui-revealed) #date,body.ui-revealed header>*,body.ui-revealed #date{transition:opacity .3s ease,visibility .3s ease}
 body:not(.ui-revealed) header>*,body:not(.ui-revealed) #date{opacity:0;visibility:hidden;pointer-events:none}
-body.ui-revealed header>*,body.ui-revealed #date{opacity:1;visibility:visible;transition:opacity .25s ease}
+body.ui-revealed header>*,body.ui-revealed #date{opacity:1;visibility:visible}
 </style></head>
 <body data-theme="dark" data-font="sans">
 <header><div class="brand">MINI CLOCK <span>BY MINI LAB</span></div><div class="actions"><button id="install" hidden>Install</button><a class="action" href="./settings.html">Settings ↗</a><button id="full">Fullscreen</button></div></header>
