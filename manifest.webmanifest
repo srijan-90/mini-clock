@@ -1,0 +1,12 @@
+{
+  "id": "./",
+  "name": "MINI CLOCK · MINI LAB",
+  "short_name": "MINI CLOCK",
+  "description": "A calm, customizable clock by MINI LAB.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#050505",
+  "icons": [{"src":"./icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
