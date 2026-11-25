@@ -10,10 +10,10 @@
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;}body{min-height:100svh;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,sans-serif;display:flex;flex-direction:column;transition:background .25s,color .25s}
 body[data-font="mono"]{--font:'JetBrains Mono',monospace;--weight:400}body[data-font="serif"]{--font:'DM Serif Display',Georgia,serif;--weight:400}body[data-font="cond"]{--font:'Oswald',sans-serif;--weight:400}
 body[data-theme="light"]{--bg:#f1f3f5;--fg:#17191d;--mut:#6e747e;--panel:#fff;--line:#d9dde3;color-scheme:light}
-header{height:76px;padding:0 clamp(20px,5vw,72px);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+header{height:64px;padding:0 clamp(20px,5vw,72px);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);transition:height .2s,padding .2s,border-color .2s}
 .brand{font-weight:600;letter-spacing:.08em;font-size:13px}.brand span{color:var(--mut);font-weight:400;margin-left:9px}
 .actions{display:flex;align-items:center;gap:10px}a,button{color:inherit;font:inherit;text-decoration:none}button,.action{border:1px solid var(--line);background:transparent;padding:10px 15px;border-radius:8px;cursor:pointer;transition:border-color .2s,background .2s}button:hover,.action:hover{border-color:var(--accent)}.primary{background:var(--accent);color:#111;border-color:var(--accent);font-weight:600}
-main{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:50px 20px 70px;gap:20px}
+main{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:20px;gap:12px}
 .eyebrow{font-size:11px;letter-spacing:.22em;color:var(--mut);text-transform:uppercase}
 #clock{font-family:var(--font);font-weight:var(--weight);font-variant-numeric:tabular-nums;letter-spacing:-.055em;line-height:1;font-size:clamp(68px,16vw,210px);white-space:nowrap}
 #clock .colon{color:var(--accent)}#clock .ampm{font:500 .15em system-ui,sans-serif;letter-spacing:.04em;color:var(--mut);margin-left:.65em}
@@ -21,17 +21,16 @@ main{flex:1;display:flex;align-items:center;justify-content:center;flex-directio
 #clock svg{display:block;width:min(64vw,390px);height:auto}
 #date{color:var(--mut);font-size:14px;letter-spacing:.04em}#zone{font-size:13px;color:var(--mut);min-height:20px}#zone strong{color:var(--fg);font-weight:500;margin-left:10px}
 .hint{margin-top:28px;color:var(--mut);font-size:11px;letter-spacing:.08em}
-footer{padding:18px 24px;text-align:center;color:var(--mut);font-size:11px;border-top:1px solid var(--line);letter-spacing:.04em}
-@media(max-width:600px){header{height:66px;padding:0 16px}.brand span{display:none}.actions{gap:7px}.actions button{padding:8px 10px;font-size:13px}main{padding:30px 14px 55px}}
+@media(max-width:600px){header{height:58px;padding:0 16px}.brand span{display:none}.actions{gap:7px}.actions button{padding:8px 10px;font-size:13px}main{padding:16px 14px}}
 
 /* Keep the clock face clean until the first interaction. */
-body:not(.ui-revealed) header .brand,body:not(.ui-revealed) header .action,body:not(.ui-revealed) #date,body:not(.ui-revealed) footer{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s ease,visibility .25s ease}
-body.ui-revealed header .brand,body.ui-revealed header .action,body.ui-revealed #date,body.ui-revealed footer{opacity:1;visibility:visible;transition:opacity .25s ease}
+body:not(.ui-revealed) header{height:0;padding-top:0;padding-bottom:0;border-color:transparent;overflow:hidden}
+body:not(.ui-revealed) header>*,body:not(.ui-revealed) #date{opacity:0;visibility:hidden;pointer-events:none}
+body.ui-revealed header>*,body.ui-revealed #date{opacity:1;visibility:visible;transition:opacity .25s ease}
 </style></head>
 <body data-theme="dark" data-font="sans">
 <header><div class="brand">MINI CLOCK <span>BY MINI LAB</span></div><div class="actions"><button id="install" hidden>Install</button><a class="action" href="./settings.html">Settings ↗</a><button id="full">Fullscreen</button></div></header>
-<main><div class="eyebrow">A little time, thoughtfully displayed</div><div id="clock" aria-live="off">00:00</div><div id="date"></div><div id="zone"></div><div class="hint">PRESS SPACE TO CHANGE CLOCK STYLE</div></main>
-<footer>MINI LAB · USEFUL BY DESIGN</footer>
+<main><div id="clock" aria-live="off">00:00</div><div id="date"></div><div id="zone"></div></main>
 <script>
 (()=>{const $=id=>document.getElementById(id);const defaults={theme:'dark',style:'digital',font:'sans',h24:false,sec:true,date:true,zone:'',accent:'#ff6a00'};let S={...defaults};try{S={...S,...JSON.parse(localStorage.getItem('miniclock')||'{}')}}catch(e){}
 const theme=()=>S.theme==='auto'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):S.theme;
