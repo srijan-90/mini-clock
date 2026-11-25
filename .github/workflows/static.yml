@@ -32,10 +32,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: "."
-          name: pages-${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: Deploy site
         id: deployment
         uses: actions/deploy-pages@v5
-        with:
-          artifact_name: pages-${{ github.run_id }}-${{ github.run_attempt }}
