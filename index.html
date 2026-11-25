@@ -23,6 +23,10 @@ main{flex:1;display:flex;align-items:center;justify-content:center;flex-directio
 .hint{margin-top:28px;color:var(--mut);font-size:11px;letter-spacing:.08em}
 footer{padding:18px 24px;text-align:center;color:var(--mut);font-size:11px;border-top:1px solid var(--line);letter-spacing:.04em}
 @media(max-width:600px){header{height:66px;padding:0 16px}.brand span{display:none}.actions{gap:7px}.actions button{padding:8px 10px;font-size:13px}main{padding:30px 14px 55px}}
+
+/* Keep the clock face clean until the first interaction. */
+body:not(.ui-revealed) header .brand,body:not(.ui-revealed) header .action,body:not(.ui-revealed) #date,body:not(.ui-revealed) footer{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s ease,visibility .25s ease}
+body.ui-revealed header .brand,body.ui-revealed header .action,body.ui-revealed #date,body.ui-revealed footer{opacity:1;visibility:visible;transition:opacity .25s ease}
 </style></head>
 <body data-theme="dark" data-font="sans">
 <header><div class="brand">MINI CLOCK <span>BY MINI LAB</span></div><div class="actions"><button id="install" hidden>Install</button><a class="action" href="./settings.html">Settings ↗</a><button id="full">Fullscreen</button></div></header>
@@ -36,7 +40,11 @@ function analog(d){const h=d.getHours()%12,m=d.getMinutes(),s=d.getSeconds();let
 const words=['twelve','one','two','three','four','five','six','seven','eight','nine','ten','eleven'],phrases=['','five past','ten past','quarter past','twenty past','twenty-five past','half past','twenty-five to','twenty to','quarter to','ten to','five to'];
 function tick(){const d=new Date(),h=d.getHours(),m=d.getMinutes(),s=d.getSeconds(),hour=h%12||12;const c=$('clock');if(S.style==='analog'){c.className='';c.innerHTML=analog(d)}else if(S.style==='words'){const n=Math.round(m/5)%12,hr=(hour+(n>6?1:0))%12;c.className='words';c.textContent=(phrases[n]?phrases[n]+' ':'')+words[hr]}else{c.className='';const hh=S.h24?String(h).padStart(2,'0'):String(hour);c.innerHTML=hh+'<span class="colon">:</span>'+String(m).padStart(2,'0')+(S.sec?'<span class="colon">:</span>'+String(s).padStart(2,'0'):'')+(S.h24?'':'<span class="ampm">'+(h<12?'AM':'PM')+'</span>')}
 $('date').hidden=!S.date;$('date').textContent=d.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'});$('zone').textContent='';if(S.zone){const label=({ 'Asia/Kolkata':'India','Asia/Tokyo':'Tokyo','Europe/London':'London','America/New_York':'New York','Asia/Dubai':'Dubai','Australia/Sydney':'Sydney','Europe/Paris':'Paris','Asia/Singapore':'Singapore','America/Los_Angeles':'Los Angeles'})[S.zone]||S.zone;const t=d.toLocaleTimeString([],{timeZone:S.zone,hour:'2-digit',minute:'2-digit',hour12:!S.h24});$('zone').innerHTML=label+' <strong>'+t+'</strong>'}}
-apply();tick();setInterval(tick,250);addEventListener('storage',e=>{if(e.key==='miniclock'){try{S={...defaults,...JSON.parse(e.newValue||'{}')};apply();tick()}catch(err){}}});
+apply();tick();setInterval(tick,250);
+const revealUI=()=>{document.body.classList.add('ui-revealed');try{localStorage.setItem('miniclock-ui-revealed','1')}catch(e){}};
+try{if(localStorage.getItem('miniclock-ui-revealed')==='1')document.body.classList.add('ui-revealed')}catch(e){}
+addEventListener('pointerdown',revealUI,{once:true});addEventListener('keydown',revealUI,{once:true});
+addEventListener('storage',e=>{if(e.key==='miniclock'){try{S={...defaults,...JSON.parse(e.newValue||'{}')};apply();tick()}catch(err){}}});
 $('full').onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen?.();addEventListener('keydown',e=>{if(e.code==='Space'&&!/INPUT|BUTTON|A/.test(e.target.tagName)){e.preventDefault();S.style=({digital:'analog',analog:'words',words:'digital'})[S.style]||'digital';tick()}if(e.key.toLowerCase()==='f')$('full').click()});
 let installPrompt;$('install').onclick=async()=>{if(installPrompt){installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;$('install').hidden=true}};addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;$('install').hidden=false});if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 })();
