@@ -40,9 +40,16 @@ const words=['twelve','one','two','three','four','five','six','seven','eight','n
 function tick(){const d=new Date(),h=d.getHours(),m=d.getMinutes(),s=d.getSeconds(),hour=h%12||12;const c=$('clock');if(S.style==='analog'){c.className='';c.innerHTML=analog(d)}else if(S.style==='words'){const n=Math.round(m/5)%12,hr=(hour+(n>6?1:0))%12;c.className='words';c.textContent=(phrases[n]?phrases[n]+' ':'')+words[hr]}else{c.className='';const hh=S.h24?String(h).padStart(2,'0'):String(hour);c.innerHTML=hh+'<span class="colon">:</span>'+String(m).padStart(2,'0')+(S.sec?'<span class="colon">:</span>'+String(s).padStart(2,'0'):'')+(S.h24?'':'<span class="ampm">'+(h<12?'AM':'PM')+'</span>')}
 $('date').hidden=!S.date;$('date').textContent=d.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'});$('zone').textContent='';if(S.zone){const label=({ 'Asia/Kolkata':'India','Asia/Tokyo':'Tokyo','Europe/London':'London','America/New_York':'New York','Asia/Dubai':'Dubai','Australia/Sydney':'Sydney','Europe/Paris':'Paris','Asia/Singapore':'Singapore','America/Los_Angeles':'Los Angeles'})[S.zone]||S.zone;const t=d.toLocaleTimeString([],{timeZone:S.zone,hour:'2-digit',minute:'2-digit',hour12:!S.h24});$('zone').innerHTML=label+' <strong>'+t+'</strong>'}}
 apply();tick();setInterval(tick,250);
-const revealUI=()=>{document.body.classList.add('ui-revealed');try{localStorage.setItem('miniclock-ui-revealed','1')}catch(e){}};
-try{if(localStorage.getItem('miniclock-ui-revealed')==='1')document.body.classList.add('ui-revealed')}catch(e){}
-addEventListener('pointerdown',revealUI,{once:true});addEventListener('keydown',revealUI,{once:true});
+let uiHideTimer;
+const revealUI=()=>{
+  document.body.classList.add('ui-revealed');
+  clearTimeout(uiHideTimer);
+  uiHideTimer=setTimeout(()=>document.body.classList.remove('ui-revealed'),5000);
+};
+addEventListener('pointermove',revealUI,{passive:true});
+addEventListener('pointerdown',revealUI);
+addEventListener('keydown',revealUI);
+addEventListener('touchstart',revealUI,{passive:true});
 addEventListener('storage',e=>{if(e.key==='miniclock'){try{S={...defaults,...JSON.parse(e.newValue||'{}')};apply();tick()}catch(err){}}});
 $('full').onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen?.();addEventListener('keydown',e=>{if(e.code==='Space'&&!/INPUT|BUTTON|A/.test(e.target.tagName)){e.preventDefault();S.style=({digital:'analog',analog:'words',words:'digital'})[S.style]||'digital';tick()}if(e.key.toLowerCase()==='f')$('full').click()});
 let installPrompt;$('install').onclick=async()=>{if(installPrompt){installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;$('install').hidden=true}};addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;$('install').hidden=false});if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
